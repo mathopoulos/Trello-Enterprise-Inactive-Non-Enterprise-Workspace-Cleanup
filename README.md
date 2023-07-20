@@ -1,6 +1,6 @@
 # Trello Enterprise - Non-Enterprise Workspace Cleanup
 
-This is an open source script to help you pull in all non-enterprise workspaces into your workspace. This ensures that all content created by users managed by your Enterprise (but are free), is covered by your security settings. This script also For more details on how exactly to use this script, see details below. 
+This is an open source script to help you pull in all non-enterprise workspaces into your workspace. This ensures that all content created by users managed by your Enterprise (but are free), is covered by your security settings. This script also deactivates users who have not been active in X days, when pulling in each workspace. For more details on how exactly to use this script, see details below. 
 
 ---
 ### User Paramaters 
