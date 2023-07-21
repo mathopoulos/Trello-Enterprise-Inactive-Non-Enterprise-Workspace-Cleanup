@@ -1,6 +1,6 @@
 //------------------------------------------------------------------------------------------------------------
 //User Editable Configurable Value
-const daysSinceLastActive = 365; //set this to the maximum number of days since last access that a member can have to be considered for an Enterprise seat. Seats will be given to users who have been since the las X days. 
+const daysSinceLastActive = 365; 
 
 //------------------------------------------------------------------------------------------------------------
 //REQUIRED authintication credentials
@@ -36,6 +36,8 @@ async function putTogetherReport() {
   const getNonEnterpriseWorkspaceUrl = `https://api.trello.com/1/enterprises/${enterpriseId}/claimableOrganizations?key=${apiKey}&token=${apiToken}`;
   let cursor = '';
   const csvHeaders = [['Workspace ID', 'Workspace Name', 'Member Count']];
+  const csvWorkspaceHeaders = [['Workspace ID', 'Member Full Name', 'Member ID', 'Member Email', 'Days Since Active', 'Date Last Active', 'Deactivated']];
+  fs.writeFileSync(`user_report_${timestamp}.csv`, csvWorkspaceHeaders.join(', ') + '\r\n');
   fs.writeFileSync(`${workspaceReportsDir}/workspace_report_${timestamp}.csv`, csvHeaders.join(', ') + '\r\n');
   while (true) {
     try {
@@ -53,6 +55,7 @@ async function putTogetherReport() {
       console.error(error);
     }
   }
+  console.log('All done!')
 }
 
 const MAX_RETRIES = 3; // maximum number of times to retry the request
@@ -60,8 +63,6 @@ const RETRY_DELAY = 5000; // time to wait between retries in milliseconds
 
 async function addWorkspaceToEnterprise(organizationID) {
   const addWorkspaceToEnterpriseURL = `https://api.trello.com/1/enterprises/${enterpriseId}/organizations?idOrganization=${organizationID}&key=${apiKey}&token=${apiToken}`;
-  console.log(addWorkspaceToEnterpriseURL);
-
   let retries = 0;
   while (retries < MAX_RETRIES) {
       try {
@@ -85,8 +86,6 @@ async function addWorkspaceToEnterprise(organizationID) {
 
 async function getUsersAddToReportDeactivate(organizationID) {
   const getWorkspaceMembers = `https://api.trello.com/1/organizations/${organizationID}?fields=&member_activity=true&members=all&key=${apiKey}&token=${apiToken}`;
-  const csvWorkspaceHeaders = [['Workspace ID', 'Member Full Name', 'Member ID', 'Days Since Active', 'Date Last Active', 'Deactivated']];
-  fs.writeFileSync(`${userReportsDir}/${organizationID}_workspace_report_${timestamp}.csv`, csvWorkspaceHeaders.join(', ') + '\r\n');
 
   try {
     const response = await fetchWithTimeout(getWorkspaceMembers, { headers });
@@ -110,7 +109,7 @@ async function getUsersAddToReportDeactivate(organizationID) {
           const daysActive = moment().diff(moment(lastActiveDate), 'days');
           const eligible = (daysActive > daysSinceLastActive || isNaN(daysActive)) ? 'Yes' : 'No';
 
-          fs.appendFileSync(`${userReportsDir}/${organizationID}_workspace_report_${timestamp}.csv`, [organizationID, member.fullName, member.id, daysActive, lastActiveDate, eligible].join(', ') + '\r\n');
+          fs.appendFileSync(`user_report_${timestamp}.csv`, [organizationID, member.fullName, member.id, member.memberEmail, daysActive, lastActiveDate, eligible].join(', ') + '\r\n');
           
           if (eligible === 'Yes') {
             await deactivateInactiveOrgUsers(enterpriseId, member.id);
@@ -143,8 +142,6 @@ async function deactivateInactiveOrgUsers(enterpriseId, memberId) {
     console.error(error);
   }
 }
-
-putTogetherReport();
 
 putTogetherReport();
 
