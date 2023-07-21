@@ -17,8 +17,8 @@ In addition there below are a few customizations you can make if you would like.
 ---
 ### Outputs
 When this script is run, it will output two different report files:
-- **Post-run_workspace report** - This is the CSV file that captures all the non-Enterprise workspaces that were added to the Enterprise.
-- **Post-run_member_report** - This is the CSV file that is generated after to keep track of the users who were given an Enterprise seat as a result of them beign part of a non-Enterprise workspace that got added to the enterprise, and which of those users were deactivated after being added to the enteprise because they were not active. 
+- **Workspace report** - This is the CSV file that captures all the non-Enterprise workspaces that were added to the Enterprise.
+- **User_report** - This is the CSV file that is generated after to keep track of the users who were given an Enterprise seat as a result of them beign part of a non-Enterprise workspace that got added to the enterprise, and which of those users were deactivated after being added to the enteprise because they were not active. 
 
 ## Have Questions?
 Post on the Atlassian Community [here](https://community.atlassian.com/t5/Trello/ct-p/trello) and tag @Alexandros Mathopoulos.
